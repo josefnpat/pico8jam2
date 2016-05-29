@@ -19,13 +19,13 @@ local menu = {
   {
     title = "Export 64x64 to stdout",
     exec = function()
-      img2str(0,0,64,64,true)
+      img2str(0,0,63,63,true)
     end,
   },
   {
     title = "Export 128x64 to stdout",
     exec = function()
-      img2str(0,0,128,64,true)
+      img2str(0,0,127,63,true)
     end,
   },
 }

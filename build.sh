@@ -7,9 +7,15 @@ cat src/data.header > ${OUTPUT}
 echo "git = \"$GIT\"" >> ${OUTPUT}
 echo "git_count = \"$GIT_COUNT\"" >> ${OUTPUT}
 
-echo "assets={}" >> ${OUTPUT}
-for file in src/assets/* ; do
-	echo -n "assets[\"$(basename $file)\"] = " >> ${OUTPUT}
+echo "rooms={}" >> ${OUTPUT}
+for file in src/assets/rooms/* ; do
+	echo -n "rooms[\"$(basename $file)\"] = " >> ${OUTPUT}
+	cat $file >> ${OUTPUT}
+done
+
+echo "people={}" >> ${OUTPUT}
+for file in src/assets/people/* ; do
+	echo -n "people[\"$(basename $file)\"] = " >> ${OUTPUT}
 	cat $file >> ${OUTPUT}
 done
 
