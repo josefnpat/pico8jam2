@@ -11,7 +11,7 @@ end
 
 --converts string to image &
 --draws it to the sprite sheet
-function str2img(str,sx,sy,sw,trans)
+function str2img(str,sx,sy,sw,trans,flip)
   local img={}
   local i=1
   local transparent
@@ -38,14 +38,21 @@ function str2img(str,sx,sy,sw,trans)
   end
   local x=sx
   local y=sy
+  local offsetx = 0
   i=1
   while (i<#img)do
     if img[i] ~= transparent then
-      sset(x,y,img[i]-1)
+      if flip then
+        sset(sx+sw-offsetx,y,img[i]-1)
+      else
+        sset(x,y,img[i]-1)
+      end
     end
     x+=1
+    offsetx += 1
     if (x>sx+sw-1) then
       x=sx
+      offsetx = 0
       y+=1
     end
     i+=1
@@ -119,6 +126,34 @@ function _update()
 
   local redraw = false
 
+  if debug then
+    if btnp(0) then
+      left = (left or 0) + 1
+      if left > people_count then
+        left = nil
+      end
+      redraw = true
+    elseif btnp(1) then
+      right = (right or 0) + 1
+      if right > people_count then
+        right = nil
+      end
+      redraw = true
+    elseif btnp(2) then
+      room = (room or 0) + 1
+      if room > room_count then
+        room = nil
+      end
+      redraw = true
+    end
+    if redraw then
+      if room then str2img(get_room(room),0,0,128) end
+      if left then str2img(get_person(left),0,0,64,true) end
+      if right then str2img(get_person(right),64,0,64,true,true) end
+    end
+    return
+  end
+
   if btnp(4) then
     if not choice and text_dt < 3600 then
       text_dt = 3600
@@ -161,6 +196,10 @@ function _update()
     current = 1
   end
 
+  if script[current].exe then
+    script[current].exe()
+  end
+
   if script[current].room then
     redraw = true
     if script[current].room == false then
@@ -199,7 +238,7 @@ function _update()
     wait = true
     if room then str2img(get_room(room),0,0,128) end
     if left then str2img(get_person(left),0,0,64,true) end
-    if right then str2img(get_person(right),64,0,64,true) end
+    if right then str2img(get_person(right),64,0,64,true,true) end
   end
 
 end
@@ -300,10 +339,16 @@ script = {
       {text="New Game",label="newgame"},
       {text="Back Story",label="backstory"},
       {text="Credits",label="credits"},
+      {text="Debug",label="debug"},
     },
     left=false,
     right=false,
     room="game",
+  },
+  {
+    label="debug",
+    exe=function() debug = true end,
+    target_label = "mainmenu",
   },
   {
     label="credits",
@@ -328,5 +373,5 @@ script = {
   {text="Telecommunication and computing takes leaps and bounds and is able to provide a personal computer in every home connected to a variant of ARPANET."},
   {text="Communist and Marxist ideals begin to enter politics without opposition, and the world's governments reforms into a united communist system that is run by an artificial intelligence written by the leading scientists."},
   {left="pso_asexual",right="pso_asexual",text="This system runs government, economy, people's lives, everything. The people call it Ethel, and it's will is enforced by the Protection Squadron Officers."},
-  {label="newgame",text="hello world"},
+  {label="newgame",text="hello world",left="pso_male",right="pso_female"},
 }
