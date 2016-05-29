@@ -1,7 +1,7 @@
-OUTPUT=thecareerofpeter.p8
-
+#!/bin/sh
 GIT=`git log --pretty=format:'%h' -n 1 $1`
 GIT_COUNT=`git log --pretty=format:'' $1 | wc -l`
+OUTPUT=thecareerofpeter-v${GIT_COUNT}.p8
 
 cat src/data.header > ${OUTPUT}
 echo "git = \"$GIT\"" >> ${OUTPUT}
