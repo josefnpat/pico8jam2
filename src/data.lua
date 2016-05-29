@@ -114,9 +114,17 @@ end
 
 room = nil
 left = nil
-left_name = ""
+left_name = nil
 right = nil
-right_name = ""
+right_name = nil
+
+name_map = {
+  pso_male = "ps officer",
+  pso_female = "ps officer",
+  pso_asexual = "ps officer",
+  susan_state = "susan",
+  susan_resistance = "susan",
+}
 
 text_dt = 0
 
@@ -221,16 +229,20 @@ function _update()
     redraw = true
     if script[current].left == false then
       left = nil
+      left_name = nil
     else
       left = get_person_index(script[current].left)
+      left_name = name_map[script[current].left] or script[current].left
     end
   end
   if script[current].right ~= nil then
     redraw = true
     if script[current].right == false then
       right = nil
+      right_name = nil
     else
       right = get_person_index(script[current].right)
+      right_name = name_map[script[current].right] or script[current].right
     end
   end
 
@@ -308,8 +320,12 @@ current_choice = 1
 function _draw()
   cls()
   spr(0,0,0,16,8)
-  print(left_name,0,64+1)
-  print(right_name,127+2-#right_name*4,64+1)
+  if left_name then
+    print(left_name,0,64+1)
+  end
+  if right_name then
+    print(right_name,127+2-#right_name*4,64+1)
+  end
   if choice then
     for i,data in pairs(choice) do
       local extra = " "
