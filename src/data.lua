@@ -40,7 +40,7 @@ function str2img(str,sx,sy,sw,trans,flip)
   local y=sy
   local offsetx = 0
   i=1
-  while (i<#img)do
+  while (i<=#img)do
     if img[i] ~= transparent then
       if flip then
         sset(sx+sw-offsetx,y,img[i]-1)
@@ -313,11 +313,40 @@ function printf(str,x,y,w)
   local x2 = x+w
   line(x,y,x2,y)
   local lines = {}
-  while #str > w/4 do
-    add(lines,sub(str,1,w/4))
-    str = sub(str,w/4+1)
+
+  local current_word = ""
+  local current_line = ""
+
+  for i = 1,#str do
+    local current_char = sub(str,i,i)
+    if current_char == " " then
+      local tw = (#current_line + #current_word+1)*4
+      if tw > w then
+        add(lines,current_line)
+        current_line = current_word
+        current_word = ""
+      else
+        current_line = current_line .. " " .. current_word
+        current_word = ""
+      end
+    else
+      current_word = current_word .. current_char
+    end
   end
-  add(lines,str)
+
+  local tw = (#current_line + #current_word+1)*4
+  if tw > w then
+    add(lines,current_line)
+    current_line = current_word
+    current_word = ""
+  else
+    current_line = current_line .. " " .. current_word
+    current_word = ""
+  end
+
+  current_line = current_line .. " " .. current_word
+  add(lines,current_line)
+
   for i,line in pairs(lines) do
     print(swapcase(line,false,true),2,64+2+7*i)
   end
@@ -431,7 +460,8 @@ script = {
   {text="Peter: I write software for computers."},
   {text="Vladimir: I see. I find the computer stuff over my head most of the time. I like to watch television."},
   {text="Peter: Do they play euchre on television?"},
-  {text="Vladimir: No, It's mostly government programs. They say that Ethel has big plans, and we should work hard in this period of time, but honestly, I'm not sure why Ethel can't just tell us."},
+  {text="Vladimir: No, It's mostly government programs. They say that Ethel has big plans, and we should work hard in this period of time."},
+  {text="Vladimir: Honestly, I'm not sure why Ethel can't just tell us."},
   {text="Regardless, you should come over and have dinner with me and my family."},
   {text="Peter: Will you have macaroni?"},
   {text="Vladimir laughs loudly."},
@@ -453,7 +483,8 @@ script = {
   {text="BBS: I really admire your work Peter. I know you made this software originally as a digital euchre partner, but it's grown into so much more! How do you feel about it now? ~Grace77"},
   {text="Peter stops a moment and thinks of a response."},
   {text="BBS: *RESPONSE#626*"},
-  {text="BBS: Sometimes when playing a hand, you have to trump your partner's ace. You might be taking a trick that could have probably been won, but you are telling your partner that you have the high cards for the rest of the tricks. Peter Bower."},
+  {text="BBS: Sometimes when playing a hand, you have to trump your partner's ace."},
+  {text="You might be taking a trick that could have probably been won, but you are telling your partner that you have the high cards for the rest of the tricks. Peter Bower."},
   {text="Peter sends the response, and only a few moment later there is another response."},
   {text="BBS: *RESPONSE#627*"},
   {text="BBS: I'm not sure what you mean, but I think I understand. We all have our strengths and weaknesses, but it's important to show each other them."},
@@ -470,15 +501,17 @@ script = {
   {text="Peter walks over to his computer and connects to the BBS."},
   {right="bbs"},
   {text="BBS: *RESPONSE#692*"},
-  {right="grace"},
-  {text="BBS: Peter, have you seen the news? They're talking about Alan! They say it's one of the most popular personal AI's they've ever seen! Are you handling the stress OK? I've been swamped with phone calls and interview requests! Do you need any help applying patches? ~Grace77"},
+  {text="BBS: Peter, have you seen the news? They're talking about Alan! They say it's one of the most popular personal AI's they've ever seen! Are you handling the stress OK? I've been swamped with phone calls and interview requests!"},
+  {text="Do you need any help applying patches? ~Grace77"},
   {text="Peter Laughs"},
   {right="bbs"},
   {text="BBS: *RESPONSE#693*"},
-  {text="BBS: Thank you Grace77. I have not seen the news, but it's certainly interesting. I don't have any problems since I don't own a phone. As for the patches, Alan takes care of most of them now. Anyway, I want to play some more cards with Alan, so take care. Peter Bower."},
+  {text="BBS: Thank you Grace77. I have not seen the news, but it's certainly interesting. I don't have any problems since I don't own a phone. As for the patches, Alan takes care of most of them now."},
+  {text="Anyway, I want to play some more cards with Alan, so take care. Peter Bower."},
   {text="Peter notices he has a new e-mail."},
   {text="EMAIL: Subject: REVOLUTION"},
-  {text="EMAIL: Body: My name is Susan. I represent the People's Resistance. For generations we have been under the oppressive powers of bourgeoisie will masked as the will of the artificial intelligence known as Ethel. We want to recruit you, so we can get Alan to help us wage the digital war. We want your AI to represent the people! Peter, we need you!"},
+  {text="EMAIL: Body: My name is Susan. I represent the People's Resistance. For generations we have been under the oppressive powers of bourgeoisie will masked as the will of the artificial intelligence known as Ethel."},
+  {text="We want to recruit you, so we can get Alan to help us wage the digital war. We want your AI to represent the people! Peter, we need you!"},
   {text="EMAIL: Subject: Re: REVOLUTION"},
   {text="EMAIL: Body: Hello Susan, it is nice to meet you. When you're playing quick hands, sometimes it makes sense to just play a lay-down, even when it may seem rude."},
   {text="Peter sends the email and returns to the card table for another game of euchre."},
@@ -489,7 +522,7 @@ script = {
   {left="peter"},
   {text="Peter opens the door."},
   {right="pso_male"},
-  {text="PSO: Greetings Mr. Peter Bower. I regret to inform you that you must vacate this apartment. The computer you have belongs to the state, and will stay."},
+  {text="PSO: Greetings Mr. Peter Bower. I regret to inform you that you must vacate this apartment. The computer you have belongs to the state, and will stay here."},
   {text="The PSO hands Peter an official letter."},
   {text="Peter: I see."},
   {right="vladimir"},
