@@ -1,3 +1,5 @@
+music(1)
+
 plookup = "abcdefghijklmnop"
 clookup = "qrstuvwxyz1234567890=-+[]{};:'<,.>?/!@#$%^&*()"
 
@@ -484,7 +486,7 @@ script = {
   {text="Peter stops a moment and thinks of a response."},
   {text="BBS: *RESPONSE#626*"},
   {text="BBS: Sometimes when playing a hand, you have to trump your partner's ace."},
-  {text="You might be taking a trick that could have probably been won, but you are telling your partner that you have the high cards for the rest of the tricks. Peter Bower."},
+  {text="You should only do this if you want your partner to know that your lowest card is an ace. Peter Bower."},
   {text="Peter sends the response, and only a few moment later there is another response."},
   {text="BBS: *RESPONSE#627*"},
   {text="BBS: I'm not sure what you mean, but I think I understand. We all have our strengths and weaknesses, but it's important to show each other them."},
