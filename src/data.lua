@@ -392,8 +392,8 @@ script = {
     label="mainmenu",
     choice={
       --{text="Continue",label="c"},
-      {text="New Game",label="newgame"},
-      {text="Back Story",label="backstory"},
+      {text="New Game",label="backstory"},
+      --{text="Back Story",label="backstory"},
       {text="Credits",label="credits"},
       --{text="Debug",label="debug"},
     },
@@ -410,13 +410,7 @@ script = {
     label="credits",
     room="credits",
     text=
-      "The Career of Peter was made   "..
-      "for the #pico2jam2 2016        "..
-      "Missing Sentinel Software      "..
-      "missingsentinelsoftware.com    "..
-      "Programming & Story: @josefnpat"..
-      "Art: @bytedesigning            "..
-      "git: v"..git_count.." ["..git.."]",
+      "The Career of Peter was made for the #pico2jam2 2016 by Missing Sentinel Software (missingsentinelsoftware.com) Programming & Story: @josefnpat, Art: @bytedesigning, Music: Bennjamin Furtado, git: v"..git_count.." ["..git.."]",
     target_label="menu",
   },
   {
