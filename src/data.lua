@@ -126,6 +126,8 @@ name_map = {
   susan_state = "susan",
   susan_resistance = "susan",
   bbs = "computer",
+  susan_tv = "television",
+  peter_tv = "television",
 }
 
 text_dt = 0
@@ -165,7 +167,10 @@ function _update()
   end
 
   if btnp(4) then
-    if (not choice or not text) and text_dt < 3600 then
+    if script[current].text == nil then
+      text_dt = 3600
+    end
+    if not choice and text_dt < 3600 then
       text_dt = 3600
     else
       if script[current].target_label then
@@ -454,7 +459,6 @@ script = {
   {text="BBS: I'm not sure what you mean, but I think I understand. We all have our strengths and weaknesses, but it's important to show each other them."},
   {text="Peter notices an issue in one of the patches, and digs into Alan's source code to see if he can fix it."},
   {right=false,left=false},
-  {label="c"},
   {text="The Next Day",room="none"},
   {room="peter"},
   {left="peter",right="alan"},
@@ -473,10 +477,8 @@ script = {
   {text="BBS: *RESPONSE#693*"},
   {text="BBS: Thank you Grace77. I have not seen the news, but it's certainly interesting. I don't have any problems since I don't own a phone. As for the patches, Alan takes care of most of them now. Anyway, I want to play some more cards with Alan, so take care. Peter Bower."},
   {text="Peter notices he has a new e-mail."},
-  {right="susan_resistance"},
   {text="EMAIL: Subject: REVOLUTION"},
   {text="EMAIL: Body: My name is Susan. I represent the People's Resistance. For generations we have been under the oppressive powers of bourgeoisie will masked as the will of the artificial intelligence known as Ethel. We want to recruit you, so we can get Alan to help us wage the digital war. We want your AI to represent the people! Peter, we need you!"},
-  {right="bbs"},
   {text="EMAIL: Subject: Re: REVOLUTION"},
   {text="EMAIL: Body: Hello Susan, it is nice to meet you. When you're playing quick hands, sometimes it makes sense to just play a lay-down, even when it may seem rude."},
   {text="Peter sends the email and returns to the card table for another game of euchre."},
@@ -524,11 +526,13 @@ script = {
   {left=false,right=false,room="none"},
   {room="park"},
   {left="peter"},
+  {text="Peter finds himself in a park. A PSO approaches."},
   {right="pso_female"},
   {text="PSO: Are you Peter Bower?"},
   {text="Peter: I am."},
   {text="The officer looks around, to make sure no one is listening."},
-  {text="PSO: That AI you wrote is causing a real mess for us, you know. It has infiltrated some of the deepest core systems that Ethel controls. You know that attempting to interfere with a government AI like ethel is a crime punishable by death, do you not?"},
+  {text="PSO: That AI you wrote is causing a real mess for us, you know. It has infiltrated some of the deepest core systems that Ethel controls."},
+  {text="PSO: You know that attempting to interfere with a government AI like ethel is a crime punishable by death, do you not?"},
   {text="Peter: I play with the extra rule, \"Screw the Dealer\". It means that if no one makes a choice, then the dealer has to choose trump regardless if they want to or not."},
   {text="PSO: Are you trying to tell me that you did this because you felt someone had to?"},
   {text="Peter: I suppose. It's not so bad if you have at least a bower. Then you can count on your partner."},
@@ -539,8 +543,13 @@ script = {
   {text="PSO: You're not one of them."},
   {text="PSO: You must be on our side then."},
   {right="susan_state"},
-  {text="Susan: Peter, I am the head of the resistance. I was skeptical at first, but after meeting you, you truly have our cause in mind. We must bring Ethel to it's knees, and with Alan, I think we can do it. Alan has already begun his part, but there are roadblocks that even Alan cannot circumvent. I urge you to join us at our studio where we can broadcast a pirate signal, and get your word out to the people!"},
+  {text="Susan: Peter, I am the head of the resistance. I was skeptical at first, but after meeting you, you truly have our cause in mind. We must bring Ethel to it's knees, and with Alan, I think we can do it."},
+  {text="Susan: Alan has already begun his part, but there are roadblocks that even Alan cannot circumvent. I urge you to join us at our studio where we can broadcast a pirate signal, and get your word out to the people!"},
   {left=false,right=false,room="none"},
+
+  {text="Susan leads Peter to the resistance's secret studio."},
+  {label="c"},
+
   {room="studio"},
   {left="susan_state",right="grace"},
   {text="Susan: Grace, you were right. Peter is truly one of us."},
@@ -548,7 +557,7 @@ script = {
   {text="Susan: I have to change, this outfit makes me feel disgusting."},
   {left=false},
   {left="peter"},
-  {text="Grace: Peter, it's so nice to finally meet you in person. After years of helping you maintain and patch Alan, it's great to see our progress come to fruition!"},
+  {text="Grace: Peter, it's so nice to finally meet you in person. After helping you maintain and patch Alan, it's great to see our progress come to fruition!"},
   {text="Peter: Hello grace. It's nice to meet you as well."},
   {text="Grace: Honestly Peter, I've admired you from afar. If we ever get out of this ..."},
   {text="Peter: ... ?"},
@@ -558,7 +567,7 @@ script = {
   {text="Grace: I understand."},
   {right=false},
   {right="susan_resistance"},
-  {text="Susan: Are you ready to go on the air Peter?"},
+  {text="Susan: Are you ready to go on the air, Peter?"},
   {text="Peter: Sure."},
   {text="Susan: Just act naturally. Just pay attention, and tell the people the same kind of thing that you told me."},
   {left=false,right=false,room="none"},
@@ -569,15 +578,16 @@ script = {
   {text="Vladimir: What?"},
   {text="Susan: My fellow comrades, we are being sold a lie! We have lived our lives in the shadow of Ethel! But it's the bourgeoisie that control Ethel! "},
   {text="Susan: I admit, you have no reason to trust us, but we have a new savior, Alan! An artificial intelligence that controls its own code! A program that controls its own fate!"},
-  {text="Susan on TV: We're no better than we were in the 1930s! Rise up against your masters! Bite the hand that feeds you crumbs!"},
+  {text="Susan: We're no better than we were in the 1930s! Rise up against your masters! Bite the hand that feeds you crumbs!"},
   {text="Susan: Here I bring you the creator of Alan, Peter Bower!"},
   {right="peter_tv"},
   {text="Peter: Hello."},
   {text="Vladimir: ... Peter?"},
-  {text="Peter on TV: Sometimes you get the poor man's hand. When this happen, you can either accept it, or you can renege. If you have a very bad hand, usually giving up the trick is better than playing it out."},
+  {text="Peter: Sometimes you get the poor man's hand. When this happen, you can either accept it, or you can renege. If you have a very bad hand, usually giving up the trick is better than playing it out."},
+  {right="susan_tv"},
   {text="Susan: Viva la revolucion!"},
   {text="*Loud banging*"},
-  {text="Susan: Oh no, it's the PSO! How did they follow us here?"},
+  {text="Susan: Oh no, it's the PSO! They must have followed us here!!"},
   {text="*Gunfire and yells*"},
   {text="Susan: Peter, get out of here! There's an exit through the back! Get out of -"},
   {text="*khhhzzzttt*"},
