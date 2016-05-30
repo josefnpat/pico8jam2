@@ -360,11 +360,11 @@ script = {
   {
     label="mainmenu",
     choice={
-      {text="Continue",label="c"},
+      --{text="Continue",label="c"},
       {text="New Game",label="newgame"},
       {text="Back Story",label="backstory"},
       {text="Credits",label="credits"},
-      {text="Debug",label="debug"},
+      --{text="Debug",label="debug"},
     },
     left=false,
     right=false,
@@ -548,8 +548,6 @@ script = {
   {left=false,right=false,room="none"},
 
   {text="Susan leads Peter to the resistance's secret studio."},
-  {label="c"},
-
   {room="studio"},
   {left="susan_state",right="grace"},
   {text="Susan: Grace, you were right. Peter is truly one of us."},
