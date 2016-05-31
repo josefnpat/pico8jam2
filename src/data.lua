@@ -1,12 +1,49 @@
 music(1)
 
+function decomp(src, dest, len)
+  local dest0=dest
+  local pos = 0
+  for i=0,len/2 do
+    local a=peek(src)
+    local b=peek(src+1)
+    src += 2
+    if (a == 0) then
+      poke(dest, b)
+      dest += 1
+    else
+      memcpy(dest,dest-a,b)
+      dest += b
+    end
+  end
+  return dest-dest0
+end
+
 plookup = "abcdefghijklmnop"
 clookup = "qrstuvwxyz1234567890=-+[]{};:'<,.>?/!@#$%^&*()"
+
+datlen={1582,1876,2274,22,2480,1048,1450,1136}
+ss=plookup..clookup
+rn={"backstory","credits","game","none","park","peter","studio","vladimir"}
+rooms={}
+src=0
+for i=1,8 do
+  l = decomp(src,0x6000,datlen[i])
+  s=""
+  for j=0,l-1 do
+    v=peek(0x6000+j)
+    s=s..sub(ss,v,v)
+  end
+  rooms["r_"..rn[i]] = s
+  src += datlen[i]
+end
+cls()
 
 function indexof(s,s2)
   local ret=-1
   for i=1, #s do
-    if (sub(s,i,i)==s2) return i
+    if (sub(s,i,i)==s2) then
+      return i
+    end
   end
   return ret
 end
@@ -275,42 +312,6 @@ function goto_label(name)
   current = 1
 end
 
-lower = "abcdefghijklmnopqrstuvwxyz"
-upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-function swapcase(string,low,up)
-  local new_string = ""
-  for i = 1,#string do
-    found = false
-
-    if low and not found then
-      for j = 1,#lower do
-        if sub(lower,j,j) == sub(string,i,i) then
-          found = true
-          new_string = new_string .. sub(upper,j,j)
-          break
-        end
-      end
-    end
-
-    if up and not found then
-      for j = 1,#lower do
-        if sub(upper,j,j) == sub(string,i,i) then
-          found = true
-          new_string = new_string .. sub(lower,j,j)
-          break
-        end
-      end
-    end
-
-    if not found then
-      new_string = new_string .. sub(string,i,i)
-    end
-
-  end
-  return new_string
-end
-
 function printf(str,x,y,w)
   local x2 = x+w
   line(x,y,x2,y)
@@ -350,7 +351,7 @@ function printf(str,x,y,w)
   add(lines,current_line)
 
   for i,line in pairs(lines) do
-    print(swapcase(line,false,true),2,64+2+7*i)
+    print(line,2,64+2+7*i)
   end
 end
 
@@ -374,7 +375,7 @@ function _draw()
       else
         color(7)
       end
-      print(extra..swapcase(data.text,false,true),3,64+7*i)
+      print(extra..data.text,3,64+7*i)
       color(7)
     end
   elseif text then
@@ -391,11 +392,8 @@ script = {
   {
     label="mainmenu",
     choice={
-      --{text="Continue",label="c"},
-      {text="New Game",label="backstory"},
-      --{text="Back Story",label="backstory"},
-      {text="Credits",label="credits"},
-      --{text="Debug",label="debug"},
+      {text="new game",label="backstory"},
+      {text="credits",label="credits"},
     },
     left=false,
     right=false,
@@ -410,227 +408,227 @@ script = {
     label="credits",
     room="credits",
     text=
-      "The Career of Peter was made for the #pico2jam2 2016 by Missing Sentinel Software (missingsentinelsoftware.com) Programming & Story: @josefnpat, Art: @bytedesigning, Music: Bennjamin Furtado, git: v"..git_count.." ["..git.."]",
+      "the career of peter was made for the #pico2jam2 2016 by missing sentinel software (missingsentinelsoftware.com) programming & story: @josefnpat, art: @bytedesigning, music: bennjamin furtado, git: v"..git_count.." ["..git.."]",
     target_label="menu",
   },
   {
     label="backstory",
     room="backstory",
-    text="March 7, 1936 - Adolf Hitler entered forces into the Rhineland, breaking the Treaty of Versailles. The French and the British invade in retaliation.",
+    text="march 7, 1936 - adolf hitler entered forces into the rhineland, breaking the treaty of versailles. the french and the british invade in retaliation.",
   },
-  {text="The League of Nations identify the economic issues that brought Hitler to power, and they discard Article 231 (War Guilt Clause) and send aid to strengthen the infrastructure."},
-  {text="This turn of events saves 60 million lives. The Cold War never happens."},
-  {text="The League of Nations succeeds in it's mission of world peace."},
-  {text="Telecommunication and computing takes leaps and bounds and is able to provide a personal computer in every home connected to a variant of ARPANET."},
-  {text="Communist and Marxist ideals begin to enter politics without opposition, and the world's governments reforms into a united communist system that is run by an artificial intelligence written by the leading scientists."},
-  {left="pso_asexual",right="pso_asexual",text="This system runs government, economy, people's lives, everything. The people call it Ethel, and its will is enforced by the Protection Squadron Officers."},
+  {text="the league of nations identify the economic issues that brought hitler to power, and they discard article 231 (war guilt clause) and send aid to strengthen the infrastructure."},
+  {text="this turn of events saves 60 million lives. the cold war never happens."},
+  {text="the league of nations succeeds in it's mission of world peace."},
+  {text="telecommunication and computing takes leaps and bounds and is able to provide a personal computer in every home connected to a variant of arpanet."},
+  {text="communist and marxist ideals begin to enter politics without opposition, and the world's governments reforms into a united communist system that is run by an artificial intelligence written by the leading scientists."},
+  {left="pso_asexual",right="pso_asexual",text="this system runs government, economy, people's lives, everything. the people call it ethel, and its will is enforced by the protection squadron officers."},
 
-  {label="newgame",room="peter",text="June 6, 1989 - Chicago, Il",left=false,right=false},
+  {label="newgame",room="peter",text="june 6, 1989 - chicago, il",left=false,right=false},
   {left="peter"},
-  {text="Peter: Good morning Alan."},
-  {right="alan",text="Alan: Good morning, Peter. How are you feeling?"},
-  {text="Peter: I'm good. I feel bad about trumping your ace last night. I shouldn't have done that."},
-  {text="Alan: It's ok. You would have drawn it out in the next round anyway. Would you like to play some more euchre today?"},
-  {text="Peter: I would like that, but I think I would like to wait to eat. Vladimir should be here soon."},
+  {text="peter: good morning alan."},
+  {right="alan",text="alan: good morning, peter. how are you feeling?"},
+  {text="peter: i'm good. i feel bad about trumping your ace last night. i shouldn't have done that."},
+  {text="alan: it's ok. you would have drawn it out in the next round anyway. would you like to play some more euchre today?"},
+  {text="peter: i would like that, but i think i would like to wait to eat. vladimir should be here soon."},
   {right=false},
   {text="*knock knock*"},
-  {text="Vladimir: Delivery!"},
+  {text="vladimir: delivery!"},
   {right="vladimir"},
-  {text="Vladimir: I have your delivery here Peter."},
-  {text="Peter: Thank you very much. I woke up very hungry today."},
-  {text="Vladimir: Did you remember to brush your teeth today?"},
-  {text="Peter: No, but I was going to brush after breakfast."},
-  {text="Vladimir takes a quick glance around."},
-  {text="Vladimir: Why does it always feel like you just moved into this place... what do you do in your freetime?"},
-  {text="Peter: I like to play euchre."},
-  {text="Vladimir: The card game, right?"},
-  {text="Peter: Yes. do you play?"},
-  {text="Vladimir: No, sorry Peter."},
-  {text="Vladimir: Wait .. who do you play euchre with?"},
-  {text="Peter: Alan."},
-  {text="Vladimir squints his eyes."},
-  {text="Vladimir holds out the delivery to Peter, and Peter accepts it."},
-  {text="Vladimir: Why don't you learn to cook? Surely then Ethel would not have to provide you with all your meals."},
-  {text="Peter: Oh, I don't think I would know how to do that. I like macaroni."},
-  {text="Vladimir: What do you do for Ethel anyway? It's every person's duty to help the people of the world."},
-  {text="Peter: I write software for computers."},
-  {text="Vladimir: I see. I find the computer stuff over my head most of the time. I like to watch television."},
-  {text="Peter: Do they play euchre on television?"},
-  {text="Vladimir: No, It's mostly government programs. They say that Ethel has big plans, and we should work hard in this period of time."},
-  {text="Vladimir: Honestly, I'm not sure why Ethel can't just tell us."},
-  {text="Regardless, you should come over and have dinner with me and my family."},
-  {text="Peter: Will you have macaroni?"},
-  {text="Vladimir laughs loudly."},
-  {text="Vladimir: Yes my comrade. We can have macaroni ..."},
+  {text="vladimir: i have your delivery here peter."},
+  {text="peter: thank you very much. i woke up very hungry today."},
+  {text="vladimir: did you remember to brush your teeth today?"},
+  {text="peter: no, but i was going to brush after breakfast."},
+  {text="vladimir takes a quick glance around."},
+  {text="vladimir: why does it always feel like you just moved into this place... what do you do in your freetime?"},
+  {text="peter: i like to play euchre."},
+  {text="vladimir: the card game, right?"},
+  {text="peter: yes. do you play?"},
+  {text="vladimir: no, sorry peter."},
+  {text="vladimir: wait .. who do you play euchre with?"},
+  {text="peter: alan."},
+  {text="vladimir squints his eyes."},
+  {text="vladimir holds out the delivery to peter, and peter accepts it."},
+  {text="vladimir: why don't you learn to cook? surely then ethel would not have to provide you with all your meals."},
+  {text="peter: oh, i don't think i would know how to do that. i like macaroni."},
+  {text="vladimir: what do you do for ethel anyway? it's every person's duty to help the people of the world."},
+  {text="peter: i write software for computers."},
+  {text="vladimir: i see. i find the computer stuff over my head most of the time. i like to watch television."},
+  {text="peter: do they play euchre on television?"},
+  {text="vladimir: no, it's mostly government programs. they say that ethel has big plans, and we should work hard in this period of time."},
+  {text="vladimir: honestly, i'm not sure why ethel can't just tell us."},
+  {text="regardless, you should come over and have dinner with me and my family."},
+  {text="peter: will you have macaroni?"},
+  {text="vladimir laughs loudly."},
+  {text="vladimir: yes my comrade. we can have macaroni ..."},
   {right=false},
   {right="alan"},
-  {text="Alan: Peter, someone has responded to your BBS post."},
-  {text="Peter: So many people seem to be interested in you."},
-  {text="Peter sits down in front of his computer and places his phone on the network receiver. He connects to a public BBS."},
+  {text="alan: peter, someone has responded to your bbs post."},
+  {text="peter: so many people seem to be interested in you."},
+  {text="peter sits down in front of his computer and places his phone on the network receiver. he connects to a public bbs."},
   {right="bbs"},
-  {text="BBS: *ORIGINAL POST*"},
-  {text="BBS: Hello everybody out there using TechnoCoreAI (aka Ethel). I'm making a (free) artificial intelligence (just a hobby, won't be big and professional) for Eagle-11 clones called Alan."},
-  {text="I'd like any feedback on things people like/dislike in TechnoCoreAI, as my AI resembles it somewhat. Yours Truly, Peter Bower (peterb62) [Download Attachment 641KB]"},
-  {text="BBS: *RESPONSE#623*"},
-  {text="BBS: Hello Peter! I just saw your project, Alan, and I love it! I have some patches for Alan. I think it will help speed up his memory management. ~Grace77"},
-  {text="BBS: *RESPONSE:#624*"},
-  {text="BBS: Thank you for your patches Grace77. I must have missed those in my last review. Thank you very much. Peter Bower."},
-  {text="BBS: *RESPONSE#625*"},
-  {text="BBS: I really admire your work Peter. I know you made this software originally as a digital euchre partner, but it's grown into so much more! How do you feel about it now? ~Grace77"},
-  {text="Peter stops a moment and thinks of a response."},
-  {text="BBS: *RESPONSE#626*"},
-  {text="BBS: Sometimes when playing a hand, you have to trump your partner's ace."},
-  {text="You should only do this if you want your partner to know that your lowest card is an ace. Peter Bower."},
-  {text="Peter sends the response, and only a few moment later there is another response."},
-  {text="BBS: *RESPONSE#627*"},
-  {text="BBS: I'm not sure what you mean, but I think I understand. We all have our strengths and weaknesses, but it's important to show each other them."},
-  {text="Peter notices an issue in one of the patches, and digs into Alan's source code to see if he can fix it."},
+  {text="bbs: *original post*"},
+  {text="bbs: hello everybody out there using technocoreai (aka ethel). i'm making a (free) artificial intelligence (just a hobby, won't be big and professional) for eagle-11 clones called alan."},
+  {text="i'd like any feedback on things people like/dislike in technocoreai, as my ai resembles it somewhat. yours truly, peter bower (peterb62) [download attachment 641kb]"},
+  {text="bbs: *response#623*"},
+  {text="bbs: hello peter! i just saw your project, alan, and i love it! i have some patches for alan. i think it will help speed up his memory management. ~grace77"},
+  {text="bbs: *response:#624*"},
+  {text="bbs: thank you for your patches grace77. i must have missed those in my last review. thank you very much. peter bower."},
+  {text="bbs: *response#625*"},
+  {text="bbs: i really admire your work peter. i know you made this software originally as a digital euchre partner, but it's grown into so much more! how do you feel about it now? ~grace77"},
+  {text="peter stops a moment and thinks of a response."},
+  {text="bbs: *response#626*"},
+  {text="bbs: sometimes when playing a hand, you have to trump your partner's ace."},
+  {text="you should only do this if you want your partner to know that your lowest card is an ace. peter bower."},
+  {text="peter sends the response, and only a few moment later there is another response."},
+  {text="bbs: *response#627*"},
+  {text="bbs: i'm not sure what you mean, but i think i understand. we all have our strengths and weaknesses, but it's important to show each other them."},
+  {text="peter notices an issue in one of the patches, and digs into alan's source code to see if he can fix it."},
   {right=false,left=false},
-  {text="The Next Day",room="none"},
+  {text="the next day",room="none"},
   {room="peter"},
   {left="peter",right="alan"},
-  {text="Peter: I've got the winning trick. See, I have both bowers."},
-  {text="Alan: You're right Peter. Well played. I enjoy being your partner."},
-  {text="Peter: I -"},
-  {text="Alan: You have a new message on the BBS."},
+  {text="peter: i've got the winning trick. see, i have both bowers."},
+  {text="alan: you're right peter. well played. i enjoy being your partner."},
+  {text="peter: i -"},
+  {text="alan: you have a new message on the bbs."},
   {right=false},
-  {text="Peter walks over to his computer and connects to the BBS."},
+  {text="peter walks over to his computer and connects to the bbs."},
   {right="bbs"},
-  {text="BBS: *RESPONSE#692*"},
-  {text="BBS: Peter, have you seen the news? They're talking about Alan! They say it's one of the most popular personal AI's they've ever seen! Are you handling the stress OK? I've been swamped with phone calls and interview requests!"},
-  {text="Do you need any help applying patches? ~Grace77"},
-  {text="Peter Laughs"},
+  {text="bbs: *response#692*"},
+  {text="bbs: peter, have you seen the news? they're talking about alan! they say it's one of the most popular personal ai's they've ever seen! are you handling the stress ok? i've been swamped with phone calls and interview requests!"},
+  {text="do you need any help applying patches? ~grace77"},
+  {text="peter laughs"},
   {right="bbs"},
-  {text="BBS: *RESPONSE#693*"},
-  {text="BBS: Thank you Grace77. I have not seen the news, but it's certainly interesting. I don't have any problems since I don't own a phone. As for the patches, Alan takes care of most of them now."},
-  {text="Anyway, I want to play some more cards with Alan, so take care. Peter Bower."},
-  {text="Peter notices he has a new e-mail."},
-  {text="EMAIL: Subject: REVOLUTION"},
-  {text="EMAIL: Body: My name is Susan. I represent the People's Resistance. For generations we have been under the oppressive powers of bourgeoisie will masked as the will of the artificial intelligence known as Ethel."},
-  {text="We want to recruit you, so we can get Alan to help us wage the digital war. We want your AI to represent the people! Peter, we need you!"},
-  {text="EMAIL: Subject: Re: REVOLUTION"},
-  {text="EMAIL: Body: Hello Susan, it is nice to meet you. When you're playing quick hands, sometimes it makes sense to just play a lay-down, even when it may seem rude."},
-  {text="Peter sends the email and returns to the card table for another game of euchre."},
+  {text="bbs: *response#693*"},
+  {text="bbs: thank you grace77. i have not seen the news, but it's certainly interesting. i don't have any problems since i don't own a phone. as for the patches, alan takes care of most of them now."},
+  {text="anyway, i want to play some more cards with alan, so take care. peter bower."},
+  {text="peter notices he has a new e-mail."},
+  {text="email: subject: revolution"},
+  {text="email: body: my name is susan. i represent the people's resistance. for generations we have been under the oppressive powers of bourgeoisie will masked as the will of the artificial intelligence known as ethel."},
+  {text="we want to recruit you, so we can get alan to help us wage the digital war. we want your ai to represent the people! peter, we need you!"},
+  {text="email: subject: re: revolution"},
+  {text="email: body: hello susan, it is nice to meet you. when you're playing quick hands, sometimes it makes sense to just play a lay-down, even when it may seem rude."},
+  {text="peter sends the email and returns to the card table for another game of euchre."},
   {right=false,left=false,room="none"},
-  {text="Later that day"},
+  {text="later that day"},
   {room="peter"},
-  {text="*Knock knock knock*"},
+  {text="*knock knock knock*"},
   {left="peter"},
-  {text="Peter opens the door."},
+  {text="peter opens the door."},
   {right="pso_male"},
-  {text="PSO: Greetings Mr. Peter Bower. I regret to inform you that you must vacate this apartment. The computer you have belongs to the state, and will stay here."},
-  {text="The PSO hands Peter an official letter."},
-  {text="Peter: I see."},
+  {text="pso: greetings mr. peter bower. i regret to inform you that you must vacate this apartment. the computer you have belongs to the state, and will stay here."},
+  {text="the pso hands peter an official letter."},
+  {text="peter: i see."},
   {right="vladimir"},
-  {text="Vladimir: What's going on here, officer?"},
-  {text="Peter: This man tells me I must leave."},
-  {text="Vladimir: Well, where are they moving you?"},
-  {text="Peter hands Vladimir the paper. Vladimir reads the order."},
-  {text="Vladimir: Wait .. there's no destination on this."},
+  {text="vladimir: what's going on here, officer?"},
+  {text="peter: this man tells me i must leave."},
+  {text="vladimir: well, where are they moving you?"},
+  {text="peter hands vladimir the paper. vladimir reads the order."},
+  {text="vladimir: wait .. there's no destination on this."},
   {left="pso_male"},
-  {text="Vladimir: Where will this man go? This is his home!"},
-  {text="PSO: I do not know, but it is not of my concern. This is what Ethel commands."},
+  {text="vladimir: where will this man go? this is his home!"},
+  {text="pso: i do not know, but it is not of my concern. this is what ethel commands."},
   {left="peter"},
-  {text="Vladimir: Grab your things Peter, you can come over to my place until things are sorted out."},
-  {text="Peter: Can we have maccaroni?"},
-  {text="Vladimir: Uh ... sure..."},
+  {text="vladimir: grab your things peter, you can come over to my place until things are sorted out."},
+  {text="peter: can we have maccaroni?"},
+  {text="vladimir: uh ... sure..."},
   {left=false},
-  {text="Vladimir: This is very strange ... why they would do this to a man with such difficulties in life already."},
+  {text="vladimir: this is very strange ... why they would do this to a man with such difficulties in life already."},
   {left=false,right=false,room="none"},
   {room="vladimir"},
   {left="vladimir"},
-  {text="Vladimir: Peter, I cannot believe they made you homeless."},
+  {text="vladimir: peter, i cannot believe they made you homeless."},
   {right="peter"},
-  {text="Vladimir: I have no idea what is going on, but I plan on finding out for you first thing in the morning."},
-  {text="Peter: Thank you very much for dinner, Vladimir. I must be going though."},
-  {text="Vladimir: Oh, do you have family?"},
-  {text="Peter: No .. they died a long time ago."},
-  {text="Vladimir: So friends perhaps?"},
-  {text="Peter: No .. I only have friends on ARPANET."},
-  {text="Vladimir: Wait ... where are you going?"},
-  {text="Peter: I ... I'm not sure."},
-  {text="Peter gets up and leaves"},
+  {text="vladimir: i have no idea what is going on, but i plan on finding out for you first thing in the morning."},
+  {text="peter: thank you very much for dinner, vladimir. i must be going though."},
+  {text="vladimir: oh, do you have family?"},
+  {text="peter: no .. they died a long time ago."},
+  {text="vladimir: so friends perhaps?"},
+  {text="peter: no .. i only have friends on arpanet."},
+  {text="vladimir: wait ... where are you going?"},
+  {text="peter: i ... i'm not sure."},
+  {text="peter gets up and leaves"},
   {right=false},
-  {text="Vladimir: What ... what is .. going on?"},
+  {text="vladimir: what ... what is .. going on?"},
   {left=false,right=false,room="none"},
   {room="park"},
   {left="peter"},
-  {text="Peter finds himself in a park. A PSO approaches."},
+  {text="peter finds himself in a park. a pso approaches."},
   {right="pso_female"},
-  {text="PSO: Are you Peter Bower?"},
-  {text="Peter: I am."},
-  {text="The officer looks around, to make sure no one is listening."},
-  {text="PSO: That AI you wrote is causing a real mess for us, you know. It has infiltrated some of the deepest core systems that Ethel controls."},
-  {text="PSO: You know that attempting to interfere with a government AI like ethel is a crime punishable by death, do you not?"},
-  {text="Peter: I play with the extra rule, \"Screw the Dealer\". It means that if no one makes a choice, then the dealer has to choose trump regardless if they want to or not."},
-  {text="PSO: Are you trying to tell me that you did this because you felt someone had to?"},
-  {text="Peter: I suppose. It's not so bad if you have at least a bower. Then you can count on your partner."},
-  {text="PSO: So you have people helping you, eh? Do you know of the terrorist's whereabouts?"},
-  {text="Peter: No, I play with Alan."},
-  {text="PSO: ..."},
-  {text="PSO: ... ..."},
-  {text="PSO: You're not one of them."},
-  {text="PSO: You must be on our side then."},
+  {text="pso: are you peter bower?"},
+  {text="peter: i am."},
+  {text="the officer looks around, to make sure no one is listening."},
+  {text="pso: that ai you wrote is causing a real mess for us, you know. it has infiltrated some of the deepest core systems that ethel controls."},
+  {text="pso: you know that attempting to interfere with a government ai like ethel is a crime punishable by death, do you not?"},
+  {text="peter: i play with the extra rule, \"screw the dealer\". it means that if no one makes a choice, then the dealer has to choose trump regardless if they want to or not."},
+  {text="pso: are you trying to tell me that you did this because you felt someone had to?"},
+  {text="peter: i suppose. it's not so bad if you have at least a bower. then you can count on your partner."},
+  {text="pso: so you have people helping you, eh? do you know of the terrorist's whereabouts?"},
+  {text="peter: no, i play with alan."},
+  {text="pso: ..."},
+  {text="pso: ... ..."},
+  {text="pso: you're not one of them."},
+  {text="pso: you must be on our side then."},
   {right="susan_state"},
-  {text="Susan: Peter, I am the head of the resistance. I was skeptical at first, but after meeting you, you truly have our cause in mind. We must bring Ethel to it's knees, and with Alan, I think we can do it."},
-  {text="Susan: Alan has already begun his part, but there are roadblocks that even Alan cannot circumvent. I urge you to join us at our studio where we can broadcast a pirate signal, and get your word out to the people!"},
+  {text="susan: peter, i am the head of the resistance. i was skeptical at first, but after meeting you, you truly have our cause in mind. we must bring ethel to it's knees, and with alan, i think we can do it."},
+  {text="susan: alan has already begun his part, but there are roadblocks that even alan cannot circumvent. i urge you to join us at our studio where we can broadcast a pirate signal, and get your word out to the people!"},
   {left=false,right=false,room="none"},
 
-  {text="Susan leads Peter to the resistance's secret studio."},
+  {text="susan leads peter to the resistance's secret studio."},
   {room="studio"},
   {left="susan_state",right="grace"},
-  {text="Susan: Grace, you were right. Peter is truly one of us."},
-  {text="Grace: I told you he was on our side!"},
-  {text="Susan: I have to change, this outfit makes me feel disgusting."},
+  {text="susan: grace, you were right. peter is truly one of us."},
+  {text="grace: i told you he was on our side!"},
+  {text="susan: i have to change, this outfit makes me feel disgusting."},
   {left=false},
   {left="peter"},
-  {text="Grace: Peter, it's so nice to finally meet you in person. After helping you maintain and patch Alan, it's great to see our progress come to fruition!"},
-  {text="Peter: Hello grace. It's nice to meet you as well."},
-  {text="Grace: Honestly Peter, I've admired you from afar. If we ever get out of this ..."},
-  {text="Peter: ... ?"},
-  {text="Grace: Well ... I was thinking that ... you know ... that we could ..."},
-  {text="Peter: When your team gets set, it's not just you who loses, but also your partner."},
-  {text="Grace: I ..."},
-  {text="Grace: I understand."},
+  {text="grace: peter, it's so nice to finally meet you in person. after helping you maintain and patch alan, it's great to see our progress come to fruition!"},
+  {text="peter: hello grace. it's nice to meet you as well."},
+  {text="grace: honestly peter, i've admired you from afar. if we ever get out of this ..."},
+  {text="peter: ... ?"},
+  {text="grace: well ... i was thinking that ... you know ... that we could ..."},
+  {text="peter: when your team gets set, it's not just you who loses, but also your partner."},
+  {text="grace: i ..."},
+  {text="grace: i understand."},
   {right=false},
   {right="susan_resistance"},
-  {text="Susan: Are you ready to go on the air, Peter?"},
-  {text="Peter: Sure."},
-  {text="Susan: Just act naturally. Just pay attention, and tell the people the same kind of thing that you told me."},
+  {text="susan: are you ready to go on the air, peter?"},
+  {text="peter: sure."},
+  {text="susan: just act naturally. just pay attention, and tell the people the same kind of thing that you told me."},
   {left=false,right=false,room="none"},
   {room="vladimir",right="tv"},
   {left="vladimir"},
-  {text="Television Ad: Enjoy Ethel brand macaroni and cheese! It contains all the required nutrients. Be sure - *khhhzzzttt*"},
+  {text="television ad: enjoy ethel brand macaroni and cheese! it contains all the required nutrients. be sure - *khhhzzzttt*"},
   {right="susan_tv"},
-  {text="Vladimir: What?"},
-  {text="Susan: My fellow comrades, we are being sold a lie! We have lived our lives in the shadow of Ethel! But it's the bourgeoisie that control Ethel! "},
-  {text="Susan: I admit, you have no reason to trust us, but we have a new savior, Alan! An artificial intelligence that controls its own code! A program that controls its own fate!"},
-  {text="Susan: We're no better than we were in the 1930s! Rise up against your masters! Bite the hand that feeds you crumbs!"},
-  {text="Susan: Here I bring you the creator of Alan, Peter Bower!"},
+  {text="vladimir: what?"},
+  {text="susan: my fellow comrades, we are being sold a lie! we have lived our lives in the shadow of ethel! but it's the bourgeoisie that control ethel! "},
+  {text="susan: i admit, you have no reason to trust us, but we have a new savior, alan! an artificial intelligence that controls its own code! a program that controls its own fate!"},
+  {text="susan: we're no better than we were in the 1930s! rise up against your masters! bite the hand that feeds you crumbs!"},
+  {text="susan: here i bring you the creator of alan, peter bower!"},
   {right="peter_tv"},
-  {text="Peter: Hello."},
-  {text="Vladimir: ... Peter?"},
-  {text="Peter: Sometimes you get the poor man's hand. When this happen, you can either accept it, or you can renege. If you have a very bad hand, usually giving up the trick is better than playing it out."},
+  {text="peter: hello."},
+  {text="vladimir: ... peter?"},
+  {text="peter: sometimes you get the poor man's hand. when this happen, you can either accept it, or you can renege. if you have a very bad hand, usually giving up the trick is better than playing it out."},
   {right="susan_tv"},
-  {text="Susan: Viva la revolucion!"},
-  {text="*Loud banging*"},
-  {text="Susan: Oh no, it's the PSO! They must have followed us here!!"},
-  {text="*Gunfire and yells*"},
-  {text="Susan: Peter, get out of here! There's an exit through the back! Get out of -"},
+  {text="susan: viva la revolucion!"},
+  {text="*loud banging*"},
+  {text="susan: oh no, it's the pso! they must have followed us here!!"},
+  {text="*gunfire and yells*"},
+  {text="susan: peter, get out of here! there's an exit through the back! get out of -"},
   {text="*khhhzzzttt*"},
   {right="tv"},
-  {text="Television Ad: Eat your macaroni and cheese, it's good for you!"},
+  {text="television ad: eat your macaroni and cheese, it's good for you!"},
   {left=false,right=false,room="none"},
   {room="park"},
   {left="peter"},
-  {text="Peter: I guess I'm alone now."},
-  {text="Peter: I wonder where I should go."},
-  {text="Peter: I wonder if people are will euchre with Alan when I'm gone."},
-  {text="Peter looks into the park, and steps to the edge of the lake."},
-  {text="He looks over to the other side, and sees something in the distance."},
+  {text="peter: i guess i'm alone now."},
+  {text="peter: i wonder where i should go."},
+  {text="peter: i wonder if people are will euchre with alan when i'm gone."},
+  {text="peter looks into the park, and steps to the edge of the lake."},
+  {text="he looks over to the other side, and sees something in the distance."},
   {left=false},
-  {text="Peter steps out into the water, walking on the surface."},
+  {text="peter steps out into the water, walking on the surface."},
   {room="none"},
-  {text="The end."},
+  {text="the end."},
   --]]
 }
